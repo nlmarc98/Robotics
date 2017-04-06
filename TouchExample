@@ -1,0 +1,48 @@
+package nl.ru.ai.MMJV;
+
+import lejos . hardware . port . SensorPort;
+import lejos . hardware . sensor . EV3TouchSensor;
+//Make A Class To Hold Our Example Method.
+
+public class TouchSampleExample {
+	
+	/*
+	* The example method,returns true if ontime of calling the touch sensor connected
+	* to.
+	* port 1 is pressed.
+	*/
+	EV3TouchSensor touch;
+	float [] sample;
+	public TouchSampleExample (){
+	// Assign the touch sensor to class variable.
+	touch = new EV3TouchSensor ( SensorPort . S1 );
+	/*
+	* Assigns pace to hold the data from the touch sample.
+	* We want the space ( length of the array off foats ) to be the size of the
+	sample
+	* our sensors will give us.
+	* We want to use a float because the sample can be a decimal number.
+	* For more information on sample sizes and composition see the API ( a link
+	is
+	* provided in practical aid 1 ).
+	*/
+	sample = new float [ touch . sampleSize ()];
+	}
+	public boolean checkTouched () {
+	/*
+	* Get the actual sample from the sensor .
+	* When you call this method the sensor data
+	* will be stored in the previously created float [].
+	*/
+	touch . fetchSample ( sample , 0 );
+	/*
+	* Check if the data has a particular value.
+	* For the touch sensor this is the first value of the sample array.
+	*/
+	if ( sample [ 0 ] == 1 ) {
+	return true;
+	}
+	return false;
+	}
+	}
+}
