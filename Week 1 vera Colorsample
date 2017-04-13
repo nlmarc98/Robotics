@@ -1,0 +1,53 @@
+package nl.ru.ai.MMJV;
+
+//Import libraries
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.robotics.SampleProvider;
+
+class ColorSampleExample {
+	/*
+	 * Initialize class variables.
+	 */
+	EV3ColorSensor colorSensor;
+	SampleProvider redProvider;
+	SampleProvider rgbProvider;
+	float[] redSample;
+	float[] rgbSample;
+
+	public ColorSampleExample() {
+		/*
+		 * The color sensor has multiple methods of retrieving information We
+		 * can get the red mode , this is how much light reflects from a red
+		 * spotlight. We can get the rgb mode , this is the rgb value of
+		 * whatever the sensor is looking at. Here we assign these modes and the
+		 * sensor to the class variables. We want to use a float because the
+		 * sample can be a decimal number. For more information on sample sizes
+		 * and composition see the API ( a link is provided in practical aid 1
+		 * ). Note that the color ID we use later is retrieved directly from the
+		 * sensor.
+		 */
+		colorSensor = new EV3ColorSensor(SensorPort.S2);
+		redProvider = colorSensor.getRedMode();
+		rgbProvider = colorSensor.getRGBMode();
+		redSample = new float[redProvider.sampleSize()];
+		rgbSample = new float[rgbProvider.sampleSize()];
+	}
+
+	public int colorID() {
+		// Get the color ID from the sensor and return it to the caller.
+		return colorSensor.getColorID();
+	}
+
+	public float[] redSample() {
+		// Get the red mode sample and return it to the caller.
+		redProvider.fetchSample(redSample, 0);
+		return redSample;
+	}
+
+	public float[] rgbSample() {
+		// Get the RGB sample and return it to the caller.
+		redProvider.fetchSample(rgbSample, 0);
+		return rgbSample;
+	}
+}
