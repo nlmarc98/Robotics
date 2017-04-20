@@ -1,0 +1,65 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.lcd;
+//import lejos.hardware.lcd.LCD;
+//import josx.platform.rcx.TextLCD;
+import lejos.hardware.TextLCD;
+
+import lejos.hardware.port.SensorPort;   
+import lejos.hardware.lcd.GraphicsLCD;
+import lejos.hardware.lcd.LCD;
+import lejos.hardware.Sound;
+	import lejos.hardware.motor.Motor;
+	import lejos.hardware.sensor.*;
+	import lejos.hardware.Button;
+	import lejos.hardware.device.LDCMotor;
+
+
+public class LineFollower {
+
+	LineValueHolder lvh = new LineValueHolder();
+	Cruiser cruise;
+	Turner turner;
+	public LineFollower() throws InterruptedException {
+	Sensor.S1.setTypeAndMode (SensorConstants.SENSOR_TYPE_LIGHT, SensorConstants.SENSOR_MODE_PCT);
+	Sensor.S1.activate();
+	waitForUser ("white");
+	lvh.setWhite (getThreshold());
+	waitForUser (null);
+	waitForUser ("black");
+	lvh.setBlack (getThreshold());
+	waitForUser (null);
+	Sensor.S1.addSensorListener(new LightReader(lvh));
+	cruise = new Cruiser (Motor.B);
+	turner = new  Turner (Motor.A, lvh);
+	}
+	
+	public void waitForUser (String message) throws InterruptedException
+	{
+	if (message != null) {
+	TextLCD.print (message);
+	}
+	Sound.twoBeeps ();
+	Button.VIEW.waitForPressAndRelease();
+	}
+	public int getThreshold () {
+	Calibrator calib = new Calibrator (Sensor.S1);
+	int value = calib.calibrate ();
+	//show calibration value, good for tuning the HYSTERESIS constant
+	//in the Turner class
+	LCD.showNumber(value);
+	return value;
+	}
+	public void start ()
+	{
+	//start threads
+	cruise.start();
+	turner.run();
+	}
+	public static void main(String[] args) throws InterruptedException {
+	LineFollower lineFollower = new LineFollower();
+	lineFollower.start ();
+	}
+	}
+	
+}
