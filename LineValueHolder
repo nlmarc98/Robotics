@@ -1,0 +1,37 @@
+package nl.ru.ai.MMJV;
+
+public class LineValueHolder {
+
+	public int white;
+	public int black;
+	public int current;
+
+	public LineValueHolder() {
+	}
+
+	public synchronized void setValue(int value) {
+		current = value;
+		this.notifyAll(); // notify all waiting readers
+	}
+
+	public synchronized int getValue() throws InterruptedException {
+		this.wait(); // wait until a new value is read
+		return current;
+	}
+
+	public void setWhite(int value) {
+		white = value;
+	}
+
+	public int getWhite() {
+		return white;
+	}
+
+	public void setBlack(int value) {
+		black = value;
+	}
+
+	public int getBlack() {
+		return black;
+	}
+}
