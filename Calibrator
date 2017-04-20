@@ -1,0 +1,20 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.port.SensorPort;
+
+public class Calibrator {
+	private static final int NUMBER_OF_SAMPLES = 20;
+	SensorPort sensor;
+
+	public Calibrator(SensorPort sensor) {
+		this.sensor = sensor;
+	}
+
+	public int calibrate() {
+		int sum = 0;
+		for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
+			sum += sensor.readValue();
+		}
+		return sum / NUMBER_OF_SAMPLES;
+	}
+}
