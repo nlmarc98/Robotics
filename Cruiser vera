@@ -1,0 +1,14 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+
+public class Cruiser extends Thread {
+		Motor motor;
+		public Cruiser(Motor motor) {
+		this.motor = motor;
+		Motor.A.setSpeed (7);
+		}
+		public void run () {
+		Motor.A.forward();
+		}
+		}
