@@ -1,0 +1,38 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.hardware.lcd.GraphicsLCD;
+import lejos.hardware.lcd.LCD;
+//import josx.platform.rcx.LCD;
+
+public class Turner extends Thread {
+	static final int HYSTERESIS = 4;
+	Motor motor;
+	LineValueHolder lvh;
+
+	public Turner(Motor motor, LineValueHolder lvh) {
+		this.lvh = lvh;
+		this.motor = motor;
+		Motor.A.setSpeed(7);
+	}
+
+	public void run() {
+		while (true) {
+
+		}
+		try {
+			int light = lvh.getValue();
+			// show the current reading, great for debugging
+			LCD.getDisplay(light);
+			if (light < lvh.getBlack() + HYSTERESIS) {
+				Motor.A.forward();
+			} else if (light > lvh.getWhite() - HYSTERESIS) {
+				Motor.A.backward();
+			} else {
+				Motor.A.stop();
+			}
+		} catch (InterruptedException ie) {
+			// ignore
+		}
+	}
+}
