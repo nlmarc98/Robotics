@@ -1,0 +1,25 @@
+package nl.ru.ai.MMJV;
+
+import org.jfree.data.general.SeriesChangeEvent;
+import org.jfree.data.general.SeriesChangeListener;
+
+import lejos.hardware.port.SensorPort;
+
+public class LightReader implements SeriesChangeListener {
+	LineValueHolder lvh;
+
+	public LightReader(LineValueHolder lvh) {
+		this.lvh = lvh;
+	}
+
+	public void stateChanged(SensorPort sensor, int new_value, int old_value) {
+		lvh.setValue(new_value);
+	}
+
+	@Override
+	public void seriesChanged(SeriesChangeEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
