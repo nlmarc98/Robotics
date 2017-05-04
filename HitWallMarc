@@ -14,6 +14,9 @@ public class HitWall implements Behavior {
 		sonar = new UltrasonicSensor(s1);
 	}
 
+	/**
+	 * Takes control if sonar, detects a object within a certain amount of meters.
+	 */
 	public boolean takeControl() {
 		return sonar.getDistance()[0] < 0.1;
 
