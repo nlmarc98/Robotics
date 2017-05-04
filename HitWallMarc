@@ -8,7 +8,6 @@ public class HitWall implements Behavior {
 
 	private UltrasonicSensor sonar;
 	private boolean suppressed = false;
-	public boolean stop=false;
 
 	public HitWall(Port s1) {
 		sonar = new UltrasonicSensor(s1);
@@ -39,6 +38,6 @@ public class HitWall implements Behavior {
 
 		Motor.B.stop();
 		Motor.C.stop();
-		stop=true;
+		
 	}
 }
