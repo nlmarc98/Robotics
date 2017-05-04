@@ -1,0 +1,38 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+
+public class TurnRight implements Behavior {
+	static final double THRESHOLD = 0.25;
+	private boolean suppressed = false;
+	public SampleRetrieval sample;
+	
+	public TurnRight(SampleRetrieval s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		System.out.println(sample.redSample()[0]);
+		return sample.redSample()[0]<THRESHOLD;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		Motor.B.setSpeed(300);
+		Motor.B.forward();
+		Motor.C.setSpeed(30);
+		Motor.C.forward();
+		while (!suppressed){
+			if (sample.redSample()[0]>THRESHOLD)
+				suppress();
+			Thread.yield();
+		}
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+}
