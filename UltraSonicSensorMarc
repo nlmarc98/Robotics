@@ -1,0 +1,34 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+
+public class UltrasonicSensor {
+	EV3UltrasonicSensor sonic;
+	float[] sample;
+
+	/**
+	 * Turns distance listener on, assigns the distance to the sample array.
+	 * 
+	 * @param s1
+	 */
+	public UltrasonicSensor(Port s1) {
+		sonic = new EV3UltrasonicSensor(SensorPort.S1);
+		sonic.getDistanceMode();
+		sample = new float[sonic.sampleSize()];
+	}
+
+	/**
+	 * Will get a distance and puts this distance in the first spot of the
+	 * array. And prints it.
+	 * 
+	 * @return the sample array with distances.
+	 */
+	public float[] getDistance() {
+		sonic.fetchSample(sample, 0);
+		System.out.printf("%.5f m\n", sample[0]);
+		return sample;
+	}
+
+}
