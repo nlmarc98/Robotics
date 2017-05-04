@@ -1,0 +1,68 @@
+package nl.ru.ai.MMJV;
+
+//import java.io.File;
+import lejos.hardware.Sound;
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+import lejos.hardware.motor.Motor;
+
+public class RedFound implements Behavior {
+	// File song= new File ("Marvin Gaye - Lets get it on.wav");
+	private boolean suppressed = false;
+	/*
+	 * private static final short[] note = { 2349, 115, 0, 5, 1760, 165, 0, 35,
+	 * 1760, 28, 0, 13, 1976, 23, 0, 18, 1760, 18, 0, 23, 1568, 15, 0, 25, 1480,
+	 * 103, 0, 18, 1175, 180, 0, 20, 1760, 18, 0, 23, 1976, 20, 0, 20, 1760, 15,
+	 * 0, 25, 1568, 15, 0, 25, 2217, 98, 0, 23, 1760, 88, 0, 33, 1760, 75, 0, 5,
+	 * 1760, 20, 0, 20, 1760, 20, 0, 20, 1976, 18, 0, 23, 1760, 18, 0, 23, 2217,
+	 * 225, 0, 15, 2217, 218 };
+	 */
+	// private static final short[] song= {262, 294, 330, 349, 392, 440, 494,
+	// 523, 523, 494, 440, 392, 349, 330, 294, 262};
+	private static final short[] ifYoureHappy = { 262, 262, 349, 349, 349, 349, 349, 349, 330, 349, /* 10! */ 392, 262,
+			262, 392, 392, 392, 392, 392, 392, 349, 392, /* 21 */ 440, 440, 440, 466, 466, 466, 466, 294, 294, 466, 466,
+			440, 440, 440, 392, 349, 349, 440, 440, 392, 392, 392, 349, 330, 330, 294, 330, /* 48 */349, 349 };
+
+	public RedFound() {
+	}
+
+	public void play() {
+		Sound.setVolume(3);
+		for (int i = 0; i < ifYoureHappy.length; i += 1) {
+			final short w = ifYoureHappy[i + 1];
+			if (i == 10 | i == 21 | i == 48) {
+				Sound.playTone(ifYoureHappy[i], 3 * w);
+			} else {
+				Sound.playTone(ifYoureHappy[i], w);
+			}
+			Sound.pause(w / 10);
+			if (suppressed)
+				return;
+		}
+
+	}
+
+	@Override
+	public void suppress() {
+		suppressed = true;
+	}
+
+	@Override
+	public void action() {
+		suppressed = false;
+		Motor.C.rotate(720, true);
+		Motor.B.rotate(-720, true);
+		play();
+		while (!suppressed)
+			Thread.yield();
+		Motor.B.stop();
+		Motor.C.stop();
+
+		System.exit(0);
+	}
+
+	@Override
+	public boolean takeControl() {
+		return true;
+	}
+}
