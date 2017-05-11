@@ -1,0 +1,41 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.robotics.Color;
+import lejos.robotics.SampleProvider;
+
+public class SampleRetrieval {
+	EV3ColorSensor colorSensor;
+	SampleProvider redProvider;
+	SampleProvider rgbProvider;
+	private float[] redSample;
+	private float[] rgbSample;
+	
+	public SampleRetrieval(){
+		colorSensor = new EV3ColorSensor(SensorPort.S3);
+		redProvider = colorSensor.getRedMode();
+		rgbProvider = colorSensor.getRGBMode();
+		redSample = new float[redProvider.sampleSize()];
+		rgbSample = new float[rgbProvider.sampleSize()];
+	}
+	
+	public int colorID() {
+		// Get the color ID from the sensor and return it to the caller.
+		return colorSensor.getColorID();
+	}
+
+	public float[] redSample() {
+		// Get the red mode sample and return it to the caller.
+		colorSensor.setFloodlight(true);
+		redProvider.fetchSample(redSample, 0);
+		return redSample;
+	}
+
+	public float[] rgbSample() {
+		// Get the RGB sample and return it to the caller.
+		colorSensor.setFloodlight(Color.WHITE);
+		rgbProvider.fetchSample(rgbSample, 0);
+		return rgbSample;
+	}
+}
