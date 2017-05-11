@@ -1,0 +1,19 @@
+package nl.ru.ai.MMJV;
+
+public class Filter {
+	private static final int NUMBER_OF_SAMPLES = 100;
+	public SampleRetrieval sample;
+	
+
+	public Filter(SampleRetrieval s) {
+		this.sample = s;
+	}
+
+	public float average() {
+		float sum = 0;
+		for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
+			sum += sample.rgbSample()[0];
+		}
+		return sum / NUMBER_OF_SAMPLES;
+	}
+}
