@@ -1,0 +1,43 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.Sound;
+import lejos.robotics.subsumption.Behavior;
+
+public class BlueFound implements Behavior {
+	private boolean suppressed = false;
+	private static final short[] song = { 523, 494, 440, 392, 349, 330, 294, 262 };
+
+	public BlueFound() {
+	}
+
+	public void play() {
+		Sound.setVolume(10);
+		for (int i = 0; i < song.length; i += 1) {
+			final short w = song[i + 1];
+			Sound.playTone(song[i], w);
+			Sound.pause(w);
+			if (suppressed)
+				return;
+		}
+	}
+
+	@Override
+	public boolean takeControl() {
+		return false;
+	}
+
+	@Override
+	public void action() {
+		suppressed = false;
+		play();
+		System.exit(0);
+
+	}
+
+	@Override
+	public void suppress() {
+		suppressed = true;
+
+	}
+
+}
