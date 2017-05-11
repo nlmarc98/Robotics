@@ -10,7 +10,8 @@ public class TouchSensor {
 	float[] sample;
 
 	/**
-	 * Turns touchMode listener on, assigns the touch pressed value (0=not pressed, 1=pressed) to the sample array.
+	 * Turns touchMode listener on, assigns the touch pressed value (0=not
+	 * pressed, 1=pressed) to the sample array.
 	 * 
 	 * @param s1
 	 */
@@ -22,6 +23,7 @@ public class TouchSensor {
 
 	/**
 	 * Will get if touch is pressed and puts this in an array.
+	 * 
 	 * @return the sample array with touch pressed or not.
 	 */
 	public float[] getDistance() {
