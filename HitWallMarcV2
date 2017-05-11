@@ -1,0 +1,42 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.Port;
+import lejos.robotics.subsumption.Behavior;
+
+public class HitWall implements Behavior {
+
+	private UltrasonicSensor sonar;
+	private boolean suppressed = false;
+
+	public HitWall(Port s1) {
+		sonar = new UltrasonicSensor(s1);
+	}
+
+	/**
+	 * Takes control if sonar, detects a object within a certain amount of
+	 * meters.
+	 */
+	public boolean takeControl() {
+		return sonar.getDistance()[0] < 1;
+
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	/**
+	 * If wall is hit, it will turn back and rotate.
+	 */
+	public void action() {
+		suppressed = false;
+		Motor.B.forward();
+		Motor.C.forward();
+		while (!suppressed)
+			Thread.yield();
+		Motor.B.stop(); // clean up
+		Motor.C.stop();
+
+	}
+}
