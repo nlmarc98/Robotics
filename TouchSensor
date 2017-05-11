@@ -1,0 +1,33 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3TouchSensor;
+
+public class TouchSensor {
+	EV3TouchSensor touch;
+
+	float[] sample;
+
+	/**
+	 * Turns touchMode listener on, assigns the touch pressed value (0=not pressed, 1=pressed) to the sample array.
+	 * 
+	 * @param s1
+	 */
+	public TouchSensor(Port s2) {
+		touch = new EV3TouchSensor(SensorPort.S2);
+		touch.getTouchMode();
+		sample = new float[touch.sampleSize()];
+	}
+
+	/**
+	 * Will get if touch is pressed and puts this in an array.
+	 * @return the sample array with touch pressed or not.
+	 */
+	public float[] getDistance() {
+		touch.fetchSample(sample, 0);
+		System.out.printf("%.5f m\n", sample[0]);
+		return sample;
+	}
+
+}
