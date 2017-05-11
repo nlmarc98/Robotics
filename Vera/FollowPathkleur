@@ -1,0 +1,49 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+import lejos.utility.Delay;
+
+public class FollowPath implements Behavior {
+	static final double WHITE = 0.45;
+	static final double BLACK = 0.1;
+	static final int SPEED = 300;
+	private boolean suppressed = false;
+	private Filter sample;
+
+	public FollowPath(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		System.out.println(sample.average());
+		return true;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		double colorValue;
+		double diff = WHITE - BLACK;
+		double invDiff = 1 / diff;
+		double BSpeed;
+		double CSpeed;
+		while (!suppressed) {
+			colorValue = sample.average();
+			System.out.println(sample.average());
+//			BSpeed = -(invDiff) * colorValue + (1 + 0.1 * invDiff);
+//			CSpeed = (invDiff) * colorValue - (0.1 * invDiff);
+//			Motor.B.setSpeed((int) (SPEED * BSpeed));
+//			Motor.B.forward();
+//			Motor.C.setSpeed((int) (SPEED * CSpeed));
+//			Motor.C.forward();
+//			Delay.msDelay(10);
+//			Thread.yield();
+		}
+//		Motor.B.stop();
+//		Motor.C.stop();
+	}
+}
