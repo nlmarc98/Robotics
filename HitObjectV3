@@ -17,7 +17,7 @@ public class HitObject implements Behavior {
 	 * Takes control if touch, is pressed.
 	 */
 	public boolean takeControl() {
-		return touch.getDistance()[0] == 0.3;
+		return touch.getDistance()[0] == 1;
 	}
 
 	public void suppress() {
@@ -26,7 +26,7 @@ public class HitObject implements Behavior {
 
 	/**
 	 * If touch is pressed, it will turn back and rotate.
-	 */
++	 */
 	public void action() {
 		suppressed = false;
 		Motor.B.rotate(-180, true);
