@@ -1,0 +1,42 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.Port;
+import lejos.robotics.subsumption.Behavior;
+
+public class HitObject implements Behavior {
+
+	private TouchSensor touch;
+	private boolean suppressed = false;
+
+	public HitObject(Port s2) {
+		touch = new TouchSensor(s2);
+	}
+
+	/**
+	 * Takes control if touch, is pressed.
+	 */
+	public boolean takeControl() {
+		return touch.getDistance()[0] == 0.3;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	/**
+	 * If touch is pressed, it will turn back and rotate.
+	 */
+	public void action() {
+		suppressed = false;
+		Motor.B.rotate(-180, true);
+		Motor.C.rotate(-360, true);
+
+		while (Motor.C.isMoving() && !suppressed)
+			Thread.yield();
+
+		Motor.B.stop();
+		Motor.C.stop();
+
+	}
+}
