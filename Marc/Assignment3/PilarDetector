@@ -1,0 +1,49 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+
+public class PilarDetector implements Behavior {
+	static final int SPEED = 100;
+	private boolean suppressed = false;
+	private Filter sample;
+	private boolean done = false;
+
+	public PilarDetector(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		// System.out.println(done);
+		return !done;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		double dist = 10;
+		while (!suppressed) {
+			dist = sample.distanceValue();
+			if (dist >= 0.2) {
+				Motor.B.setSpeed(SPEED);
+				Motor.B.backward();
+				Motor.C.setSpeed(SPEED);
+				Motor.C.forward();
+			} else if (dist <= 0.19) {
+				done = true;
+				suppress();
+			} else {
+				Motor.B.setSpeed(SPEED);
+				Motor.B.forward();
+				Motor.C.setSpeed(SPEED);
+				Motor.C.forward();
+			}
+			Thread.yield();
+		}
+		Motor.B.stop(); // clean up
+		Motor.C.stop();
+	}
+}
