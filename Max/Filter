@@ -9,11 +9,28 @@ public class Filter {
 		this.sample = s;
 	}
 
-	public float average() {
+	public float redValue() {
 		float sum = 0;
 		for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
 			sum += sample.redSample()[0];
 		}
 		return sum / NUMBER_OF_SAMPLES;
 	}
+	
+	public float rgbValue() {
+		float sum = 0;
+		for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
+			sum += sample.rgbSample()[0];
+		}
+		return sum / NUMBER_OF_SAMPLES;
+	}
+	
+	public float distanceValue() {
+		float sum = 0;
+		for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
+			sum += sample.distanceSample()[0];
+		}
+		return sum / NUMBER_OF_SAMPLES;
+	}
 }
+
