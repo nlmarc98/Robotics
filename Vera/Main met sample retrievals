@@ -1,0 +1,22 @@
+package nl.ru.ai.MMJV;
+
+import lejos.robotics.subsumption.Arbitrator;
+import lejos.robotics.subsumption.Behavior;
+
+//gebruik goede filter class, goede SampleRetrieval class 
+//Uitcommenten welke sample je nodig hebt (red, rgb of distance)
+
+public class ProjectAlpaK {
+
+	public static void main(String[] args) {
+		SampleRetrieval sr = new SampleRetrieval();
+		Filter sample = new Filter(sr);
+		while (true) {
+		//System.out.println("YOOOOOOOOOOOOOOOOOOOOOOO hoi");
+		System.out.println(sample.redValue());
+		//System.out.println(sample.rgbValue());  
+		//System.out.println(sample.distanceValue());
+		}
+
+	}
+}
