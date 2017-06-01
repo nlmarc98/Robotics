@@ -1,0 +1,68 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+import lejos.utility.Delay;
+
+public class SolveMaze implements Behavior {
+	static final double WHITE = 0.35;
+	static final double BLACK = 0.1;
+	static final int SPEED = 200;
+	static final int CORNER_TIME = 30;
+	static final double GOAL_DIST = 0.2;
+	private boolean suppressed = false;
+	private Filter sample;
+	boolean done = false;
+
+	public SolveMaze(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		return !done;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		double colorValue;
+		double diff = WHITE - BLACK;
+		double invDiff = 1 / diff;
+		double BSpeed;
+		double CSpeed;
+		int counter = 0;
+		while (!suppressed) {
+			if (done)
+				suppress();
+			colorValue = sample.redValue();
+			if (colorValue < 0.15)
+				counter++;
+			else
+				counter = 0;
+			if (counter >= CORNER_TIME) {
+				Motor.B.setSpeed((int) (SPEED * 1.5));
+				Motor.C.setSpeed((int) (SPEED * 0.5));
+				Motor.B.forward();
+				Motor.C.backward();
+			} else {
+				BSpeed = -(invDiff) * colorValue + (1 + 0.1 * invDiff);
+				CSpeed = (invDiff) * colorValue - (0.1 * invDiff);
+				Motor.B.setSpeed((int) (SPEED * BSpeed));
+				Motor.B.forward();
+				Motor.C.setSpeed((int) (SPEED * CSpeed));
+				Motor.C.forward();
+			}
+			Delay.msDelay(10);
+			if(sample.distanceValue() < GOAL_DIST){
+				done = true;
+				suppress();
+			}
+			Thread.yield();
+		}
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+}
