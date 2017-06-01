@@ -18,7 +18,6 @@ public class FollowPathCounterClockwise implements Behavior {
 	}
 
 	public boolean takeControl() {
-		System.out.println("CounterClockwise " + cornerCount);
 		return cornerCount < 2;
 	}
 
@@ -37,7 +36,7 @@ public class FollowPathCounterClockwise implements Behavior {
 		while (!suppressed) {
 			if (cornerCount >= 2)
 				suppress();
-			colorValue = sample.average();
+			colorValue = sample.redValue();
 			if (colorValue > 0.35)
 				counter++;
 			else
