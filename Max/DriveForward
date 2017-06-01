@@ -5,13 +5,13 @@ import lejos.robotics.subsumption.Behavior;
 import lejos.utility.Delay;
 
 public class DriveForward implements Behavior {
-	private boolean suppressed = false;
 	static final int SPEED = 100;
+	static final double WHITE = 0.35;
+	private boolean suppressed = false;
 	public Filter sample;
 	boolean done = false;
 
 	public DriveForward(Filter s) {
-		System.out.println("Forward");
 		this.sample = s;
 	}
 
@@ -30,7 +30,7 @@ public class DriveForward implements Behavior {
 		Motor.C.setSpeed(SPEED);
 		Motor.C.forward();
 		while (!suppressed) {
-			if (sample.average() > 0.3) {
+			if (sample.redValue() > WHITE) {
 				done = true;
 				Motor.B.setSpeed(SPEED);
 				Motor.B.backward();
