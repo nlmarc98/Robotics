@@ -4,8 +4,8 @@ import lejos.hardware.motor.Motor;
 import lejos.robotics.subsumption.Behavior;
 import lejos.utility.Delay;
 
-public class FollowPathClockwise implements Behavior {
-	static final double WHITE = 0.35;
+public class FollowPathCounterClockwise implements Behavior {
+	static final double WHITE = 0.45;
 	static final double BLACK = 0.1;
 	static final int SPEED = 200;
 	static final int CORNER_TIME = 30;
@@ -13,13 +13,12 @@ public class FollowPathClockwise implements Behavior {
 	private Filter sample;
 	private int cornerCount = 0;
 
-	public FollowPathClockwise(Filter s) {
+	public FollowPathCounterClockwise(Filter s) {
 		this.sample = s;
 	}
 
 	public boolean takeControl() {
-		System.out.println("Clockwise " + cornerCount);
-		return cornerCount < 4;
+		return cornerCount < 2;
 	}
 
 	public void suppress() {
@@ -35,10 +34,10 @@ public class FollowPathClockwise implements Behavior {
 		double CSpeed;
 		int counter = 0;
 		while (!suppressed) {
-			if (cornerCount >= 4)
+			if (cornerCount >= 2)
 				suppress();
-			colorValue = sample.average();
-			if (colorValue < 0.15)
+			colorValue = sample.redValue();
+			if (colorValue > 0.35)
 				counter++;
 			else
 				counter = 0;
@@ -50,8 +49,8 @@ public class FollowPathClockwise implements Behavior {
 				Motor.B.forward();
 				Motor.C.backward();
 			} else {
-				BSpeed = -(invDiff) * colorValue + (1 + 0.1 * invDiff);
-				CSpeed = (invDiff) * colorValue - (0.1 * invDiff);
+				BSpeed = (invDiff) * colorValue - (0.1 * invDiff);
+				CSpeed = -(invDiff) * colorValue + (1 + 0.1 * invDiff);
 				Motor.B.setSpeed((int) (SPEED * BSpeed));
 				Motor.B.forward();
 				Motor.C.setSpeed((int) (SPEED * CSpeed));
