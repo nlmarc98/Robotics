@@ -4,7 +4,6 @@ public class Filter {
 	private static final int NUMBER_OF_SAMPLES = 100;
 	public SampleRetrieval sample;
 	
-
 	public Filter(SampleRetrieval s) {
 		this.sample = s;
 	}
@@ -33,4 +32,3 @@ public class Filter {
 		return sum / NUMBER_OF_SAMPLES;
 	}
 }
-
