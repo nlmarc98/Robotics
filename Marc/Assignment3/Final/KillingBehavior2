@@ -1,0 +1,107 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.Sound;
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+
+public class KillingBehavior implements Behavior {
+
+	private static final short[] GETITON = { 2349, 115, 0, 5, };
+	private static final short[] IFYOUAREHAPPY = { 262, 262, 349, };
+
+	private boolean suppressed = false;
+	static final int SPEED = 300;
+	static final int ROTATE = 90;
+	private int t = 0;
+	public Filter sample;
+
+	public KillingBehavior(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		return (sample.distanceValue() < 0.10);
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void play() {
+		Sound.setVolume(10);
+		for (int i = 0; i < GETITON.length; i += 1) {
+			final short w = GETITON[i + 1];
+			if (i == 10 | i == 21 | i == 48) {
+				Sound.playTone(GETITON[i], 3 * w);
+			} else {
+				Sound.playTone(GETITON[i], w);
+			}
+			Sound.pause(w / 10);
+			if (suppressed)
+				return;
+		}
+	}
+
+	public void play2() {
+		Sound.setVolume(10);
+		for (int i = 0; i < IFYOUAREHAPPY.length; i += 1) {
+			final short w = IFYOUAREHAPPY[i + 1];
+			if (i == 10 | i == 21 | i == 48) {
+				Sound.playTone(IFYOUAREHAPPY[i], 3 * w);
+			} else {
+				Sound.playTone(IFYOUAREHAPPY[i], w);
+			}
+			Sound.pause(w / 10);
+			if (suppressed)
+				return;
+		}
+
+	}
+
+	public void action() {
+		Motor.B.stop();
+		Motor.C.stop();
+		suppressed = false;
+		while (!suppressed) {
+			{
+				if (sample.redValue() > 0.07 && sample.redValue() < 0.012) {
+					System.out.println("Found blue pillar");
+					for (int i = 0; i < 5; i++) {
+						Motor.B.setSpeed(SPEED);
+						Motor.B.backward();
+						Motor.C.setSpeed(SPEED);
+						Motor.C.forward();
+					}
+					play2();
+				} else {
+					// System.out.println(sample.redValue());
+					System.out.println("Found red pillar");
+					if (t != 3) {
+						// suppressed = false;
+						Motor.B.backward();
+						Motor.C.backward();
+						t += 1;
+					} else {
+						t = 0;
+						// suppressed = true;
+						Motor.B.stop();
+						Motor.C.stop();
+						play();
+						if (t != 5) {
+							// suppressed = false;
+							Motor.B.forward();
+							Motor.C.forward();
+							t += 1;
+						}
+					}
+					suppress();
+				}
+
+			}
+
+			Thread.yield();
+		}
+		Motor.B.stop(); // clean up
+		Motor.C.stop();
+	}
+}
