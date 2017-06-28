@@ -1,0 +1,4 @@
+- Values van hitBeach kloppen nog totaal niet, overlappen zelfs.
+- Thread.yield(); in killormatebehavior werkt niet helemaal m.b.t blue. Mating behavior stopt niet.
+
+(eventueel misschien nog iets mis met accolades in mating or killing behavior, zag ik eerst een rare accolade in).
