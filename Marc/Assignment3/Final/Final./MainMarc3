@@ -1,0 +1,19 @@
+package nl.ru.ai.MMJV;
+
+import lejos.robotics.subsumption.Arbitrator;
+import lejos.robotics.subsumption.Behavior;
+
+public class MainMarc3 {
+
+	public static void main(String[] args) throws Exception {
+		System.out.println("Ey oh, let's roll.");
+		SampleRetrieval sr = new SampleRetrieval();
+		Filter sample = new Filter(sr);
+		Behavior b3 = new PilarDetector(sample);
+		Behavior b2 = new KillingBehavior(sample);
+		Behavior b1 = new HitBeach(sample);
+		Behavior[] bArray = {b3, b2, b1};
+		Arbitrator arby = new Arbitrator(bArray);
+		arby.start();
+	}
+}
