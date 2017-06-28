@@ -15,7 +15,7 @@ public class ProjectAlpaK {
 		Behavior b5 = new MoveToPillar(sample);
 		Behavior b6 = new MazeFound();
 		Behavior b7 = new SolveMaze(sample);
-		Behavior b8 = new RedFound();
+		Behavior b8 = new Finished();
 		Behavior [] bArray = {b8, b7, b6, b5 , b4, b3, b2, b1};
 	    Arbitrator arby = new Arbitrator(bArray);
 	    arby.start();
