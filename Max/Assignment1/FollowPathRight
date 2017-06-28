@@ -1,0 +1,66 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+import lejos.utility.Delay;
+
+public class FollowPathRight implements Behavior {
+	static final double WHITE = 0.45;
+	static final double BLACK = 0.1;
+	static final int SPEED = 300;
+	static final int CORNER_TIME = 15;
+	static final int NUMBER_OF_CORNERS = 2;
+	private boolean suppressed = false;
+	private Filter sample;
+	private int cornerCount = 0;
+
+	public FollowPathRight(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		return cornerCount < NUMBER_OF_CORNERS;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		double colorValue;
+		double diff = WHITE - BLACK;
+		double invDiff = 1 / diff;
+		double BSpeed;
+		double CSpeed;
+		int counter = 0;
+		while (!suppressed) {
+			if (cornerCount >= NUMBER_OF_CORNERS)
+				suppress();
+			colorValue = sample.redValue();
+			if (colorValue > WHITE)
+				counter++;
+			else
+				counter = 0;
+			if (counter >= CORNER_TIME) {
+				if (counter == CORNER_TIME)
+					cornerCount++;
+				Motor.B.setSpeed((int) (SPEED * 0.8));
+				Motor.C.setSpeed((int) (SPEED * 0.8));
+				Motor.B.forward();
+				Motor.C.backward();
+			} else {
+				BSpeed = (invDiff) * colorValue - (0.1 * invDiff);
+				CSpeed = -(invDiff) * colorValue + (1 + 0.1 * invDiff);
+				Motor.B.setSpeed((int) (SPEED * BSpeed));
+				Motor.B.forward();
+				Motor.C.setSpeed((int) (SPEED * CSpeed));
+				Motor.C.forward();
+			}
+			Delay.msDelay(10);
+			Thread.yield();
+		}
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+}
