@@ -1,0 +1,48 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+import lejos.utility.Delay;
+
+public class HitBeach implements Behavior {
+	private boolean suppressed = false;
+	static final int SPEED = 300;
+	public Filter sample;
+
+	public HitBeach(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		return (sample.redValue() > 0.35 && sample.redValue() < 0.42);
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		System.out.println("Hit Beach");
+		System.out.println(sample.redValue());
+		suppressed = false;
+		while (!suppressed) {
+			try {
+				Motor.B.setSpeed(SPEED);
+				Motor.B.backward();
+				Motor.C.setSpeed(SPEED);
+				Motor.C.backward();
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			suppress();
+		}
+
+		Thread.yield();
+
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+
+}
