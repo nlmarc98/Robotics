@@ -1,0 +1,54 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+import lejos.utility.Delay;
+
+public class MoveToPillar implements Behavior {
+	static final double WHITE = 0.35;
+	static final int SPEED = 200;
+	static final double DIST_TO_PILLAR = 1.5;
+	private boolean suppressed = false;
+	private Filter sample;
+	private boolean done = false;
+
+	public MoveToPillar(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		return !done;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		double dist = 10;
+		double red = 0;
+		while (!suppressed) {
+			dist = sample.distanceValue();
+			System.out.println(dist);
+			red = sample.redValue();
+			if (dist >= DIST_TO_PILLAR) {
+				Motor.B.setSpeed(SPEED);
+				Motor.B.backward();
+				Motor.C.setSpeed(SPEED);
+				Motor.C.forward();
+			} else if (dist <= 0.2 && red >= WHITE) {
+				done = true;
+				suppress();
+			} else {
+				Motor.B.setSpeed(SPEED);
+				Motor.B.forward();
+				Motor.C.setSpeed(SPEED);
+				Motor.C.forward();
+			}
+			Thread.yield();
+		}
+		Motor.B.stop(); // clean up
+		Motor.C.stop();
+	}
+}
