@@ -1,0 +1,76 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+
+public class FollowPath implements Behavior {
+	static final double WHITE = 0.20;
+	static final double BLACK = 0.05;
+	static final int SPEED = 300;
+	static final int CORNER_TIME = 30;
+	static final double GOAL_DIST = 0.2;
+	private boolean suppressed = false;
+	private Filter sample;
+	boolean done = false;
+
+	public FollowPath(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		return !done;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		double colorValue;
+		double diff = WHITE - BLACK;
+		double invDiff = 1 / diff;
+		double BSpeed;
+		double CSpeed;
+		double extraAngleSpeed;
+		int counter = 0;
+		while (!suppressed) {
+			System.out.println(sample.angleValue());
+			
+			extraAngleSpeed = sample.angleValue() * -15;
+			colorValue = sample.redValue();
+			if (colorValue>0.30){
+				colorValue=0.30;
+			}
+			if (colorValue < 0.15)
+				counter++;
+			else
+				counter = 0;
+			if (counter >= CORNER_TIME) {
+				Motor.B.setSpeed((int) (SPEED * 0.8));
+				Motor.C.setSpeed((int) (SPEED * 0.8));
+				Motor.B.forward();
+				Motor.C.backward();}
+			else{ 
+			colorValue = sample.redValue();
+			BSpeed = -(invDiff) * colorValue + (1 + 0.1 * invDiff) ;
+			CSpeed = (invDiff) * colorValue - (0.1 * invDiff) ;
+			Motor.B.setSpeed((int) ((SPEED + extraAngleSpeed) * BSpeed ));
+			Motor.B.forward();
+			Motor.C.setSpeed((int) ((SPEED + extraAngleSpeed) * CSpeed ));
+			Motor.C.forward();
+			}
+			Thread.yield();
+		}
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+	
+// Naar beneden is 10.0/
+// Naar boven is -10.0
+// Volgende week: 
+// - values van 1 bij het omhooggaan van de bridge. Dus de -15 veranderen in een hoger getal.
+// Gyro resetten op juiste manier
+}
+
+// Extra snelheid meegeven om de wip op te komen
