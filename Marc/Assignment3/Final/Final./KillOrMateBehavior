@@ -1,16 +1,19 @@
 package nl.ru.ai.MMJV;
 
+import java.io.File;
+
+import lejos.hardware.Sound;
 import lejos.hardware.motor.Motor;
 import lejos.robotics.subsumption.Behavior;
 
 public class KillOrMateBehavior implements Behavior {
 
 	private boolean suppressed = false;
-	static final int SPEED = 200;
+	static final int SPEED = 180;
 	static final int KILLSPEED = 300;
 	static final int ROTATE = 90;
-	private MusicRed red;
-	private MusicBlue blue;
+	File songRed = new File("Western theme.wav");
+	File songBlue = new File("Sexy Music.wav");
 
 	public Filter sample;
 
@@ -26,30 +29,41 @@ public class KillOrMateBehavior implements Behavior {
 		suppressed = true;
 	}
 
+	public void playRed() {
+		Sound.playSample(songRed, 150);
+		if (suppressed)
+			return;
+	}
+
+	public void playBlue() {
+		Sound.playSample(songBlue, 100);
+		if (suppressed)
+			return;
+	}
+
 	public void action() {
 		Motor.B.stop();
 		Motor.C.stop();
 
 		suppressed = false;
 		while (!suppressed) {
+			System.out.println(sample.redValue());
 			{
-				if (sample.redValue() > 0.01 && sample.redValue() < 0.04) {
+				if (sample.redValue() > 0.08 && sample.redValue() < 0.10) {
 					System.out.println("Found blue pillar");
 					// System.out.println(sample.redValue());
-					blue.play();
+					playBlue();
 					try {
-						Motor.B.setSpeed(SPEED);
-						Motor.C.setSpeed(SPEED);
 						Motor.B.backward();
 						Motor.C.backward();
-						Thread.sleep(1500);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					Motor.A.stop();
 					Motor.C.stop();
-				} else if (sample.redValue() > 0.20 && sample.redValue() < 0.33) {
+				} else if (sample.redValue() > 0.30 && sample.redValue() < 0.38) {
 					System.out.println("Found red pillar");
 					// System.out.println(sample.redValue());
 					Motor.B.setSpeed(SPEED);
@@ -58,13 +72,13 @@ public class KillOrMateBehavior implements Behavior {
 					Motor.C.backward();
 					Motor.B.stop();
 					Motor.C.stop();
-					red.play();
+					playRed();
 					try {
 						Motor.B.setSpeed(KILLSPEED);
 						Motor.C.setSpeed(KILLSPEED);
 						Motor.B.forward();
 						Motor.C.forward();
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
