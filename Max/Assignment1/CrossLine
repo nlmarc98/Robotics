@@ -1,0 +1,43 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+import lejos.utility.Delay;
+
+public class CrossLine implements Behavior {
+	private boolean suppressed = false;
+	static final int SPEED = 300;
+	static final int DELAY = 1000;
+	public Filter sample;
+	boolean done = false;
+
+	public CrossLine(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		return !done;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		Motor.B.setSpeed((int) (SPEED * 1.5));
+		Motor.B.forward();
+		Motor.C.setSpeed((int) (SPEED * 0.5));
+		Motor.C.backward();
+		Delay.msDelay(DELAY);
+		while (!suppressed) {
+			if (sample.redValue() < 0.15) {
+				done = true;
+				suppress();
+			}
+			Thread.yield();
+		}
+		Motor.B.stop(); // clean up
+		Motor.C.stop();
+	}
+}
