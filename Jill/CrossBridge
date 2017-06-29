@@ -1,0 +1,65 @@
+package nl.ru.ai.MMJV;
+
+import lejos.hardware.motor.Motor;
+import lejos.robotics.subsumption.Behavior;
+import lejos.utility.Delay;
+
+public class CrossBridge implements Behavior {
+	static final double WHITE = 0.35;
+	static final double BLACK = 0.1;
+	static final int SPEED = 250;
+	static final int CORNER_TIME = 30;
+	private boolean suppressed = false;
+	private Filter sample;
+	private boolean done = false;
+
+	public CrossBridge(Filter s) {
+		this.sample = s;
+	}
+
+	public boolean takeControl() {
+		return !done;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	public void action() {
+		suppressed = false;
+		double colorValue;
+		double diff = WHITE - BLACK;
+		double invDiff = 1 / diff;
+		double BSpeed;
+		double CSpeed;
+		int counter = 0;
+		while (!suppressed) {
+			colorValue = sample.redValue();
+			System.out.println(colorValue);
+			if (colorValue > WHITE)
+				counter++;
+			else
+				counter = 0;
+			if (counter >= CORNER_TIME) {
+				Motor.B.setSpeed((int) (SPEED * 0.8));
+				Motor.C.setSpeed((int) (SPEED * 0.8));
+				Motor.B.backward();
+				Motor.C.forward();
+				Delay.msDelay(1000);
+				done = true;
+				suppress();
+			} else {
+				BSpeed = -(invDiff) * colorValue + (1 + 0.1 * invDiff);
+				CSpeed = (invDiff) * colorValue - (0.1 * invDiff);
+				Motor.B.setSpeed((int) (SPEED * BSpeed));
+				Motor.B.forward();
+				Motor.C.setSpeed((int) (SPEED * CSpeed));
+				Motor.C.forward();
+			}
+			Delay.msDelay(10);
+			Thread.yield();
+		}
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+}
