@@ -1,7 +1,6 @@
 package nl.ru.ai.MMJV;
 
 import java.io.File;
-
 import lejos.hardware.Sound;
 import lejos.robotics.subsumption.Behavior;
 
