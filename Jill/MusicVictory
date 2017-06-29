@@ -1,0 +1,32 @@
+package nl.ru.ai.MMJV;
+
+import java.io.File;
+import lejos.hardware.Sound;
+import lejos.robotics.subsumption.Behavior;
+
+public class MusicVictory implements Behavior {
+	File song = new File ("Victory Sound.wav");
+	private boolean suppressed = false;
+	
+public MusicVictory(){
+}
+
+public void play (){
+	Sound.playSample(song, 200);
+}
+
+@Override
+public void suppress() {
+	suppressed = true;
+}
+
+@Override
+public void action() {
+	play();
+}
+
+@Override
+public boolean takeControl() {
+	return true;
+}
+}
